@@ -28,16 +28,23 @@
         this.height = height;
         this.board = board;
         this.board.bars.push(this);
-
         this.kind = "rectangle";
+        this.speed = 10; //controlador de velocidad
     }
 
     self.Bar.prototype = {
         down:function(){
             //funcion para bajar la barra
+            this.y += this.speed;
         },
         up:function(){
             //funcion para subir la barra
+            // this.y = this.y - this.speed;
+            this.y -= this.speed;
+        },
+
+        toString: function(){
+            return "x: "+this.x +" y: "+ this.y;
         }
     }
 
@@ -81,14 +88,34 @@
 
 })();
 
+var board = new Board(800,400);
+var board_view = new BoardView(canvas,board);
+ var barD = new Bar(20,100,40,100,board);
+ var barI = new Bar(737,100,40,100,board);
+
+document.addEventListener("keydown",function(ev){
+    
+    if (ev.keyCode == 38) {
+        barD.up();
+        console.log(barD.toString());
+    }else if (ev.keyCode == 40) {
+        barD.down();
+        console.log(barD.toString());
+    }else if (ev.keyCode == 87) {
+        console.log(ev.keyCode);
+        barI.up();
+        console.log(barI.toString());
+    }else if (ev.keyCode == 83) {
+        console.log(ev.keyCode);
+        barI.down();
+        console.log(barI.toString());
+    }
+});
+
 window.addEventListener("load",main);
 
 function main(){
-    var board = new Board(800,400);
-     var bar = new Bar(20,100,40,100,board);
-     var bar = new Bar(737,100,40,100,board);
     var canvas = document.getElementById('canva');
-    var board_view = new BoardView(canvas,board);
     console.log(board);
      board_view.draw();
 }
