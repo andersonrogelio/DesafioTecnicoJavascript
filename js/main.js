@@ -13,12 +13,15 @@
         //mi get para obtener mis elementos 
         get elements(){
             var elements = this.bars;
-            elements.push(this.ball);
+            // elements.push(this.ball);
             //nos devuelte las barras y el tablero
             return elements;
         }
     }
 })();
+
+//Funcion de la pelota
+
 //Nos permitira dibujar las barras
 (function(){
     self.Bar = function(x,y,width,height,board){
@@ -61,18 +64,27 @@
     }
 
         self.BoardView.prototype = {
+            clean: function(){
+                console.log(":3");
+                this.ctx.clearRect(0,0,this.board.width,this.board.height);
+            },
              draw: function(){
-            console.log(this.board);
+            // console.log(this.board);
             for (var i = this.board.elements.length-1; i >= 0 ; i--) {
                 var el = this.board.elements[i];
                 draw(this.ctx,el);                
             };
+        },
+        play: function (){
+            this.clean();
+            this.draw();
         }
     }
 
     //Dibujara los 
     function draw(ctx,element){
-        if (element !== null && element.hasOwnProperty("kind")) {
+        // if (element !== null && element.hasOwnProperty("kind")) {
+        // if (element !== null ) {
             switch (element.kind) {
                 case "rectangle":
                     ctx.fillRect(element.x,element.y,element.width,element.height);
@@ -81,41 +93,42 @@
                 // default:
                 //     break;
             }
-        }
+        // }
 
     }
 
 
 })();
 
+var canvas = document.getElementById('canvas');
 var board = new Board(800,400);
 var board_view = new BoardView(canvas,board);
- var barD = new Bar(20,100,40,100,board);
- var barI = new Bar(737,100,40,100,board);
+ var barI = new Bar(20,100,40,100,board);
+ var barD = new Bar(737,100,40,100,board);
 
-document.addEventListener("keydown",function(ev){
+ 
+ document.addEventListener("keydown",function(ev){
+     ev.preventDefault();
+     if (ev.keyCode == 38) {
+         barD.up();
+         console.log(barD.toString());
+        }else if (ev.keyCode == 40) {
+            barD.down();
+            console.log(barD.toString());
+        }else if (ev.keyCode == 87) {
+            barI.up();
+            console.log(barI.toString());
+        }else if (ev.keyCode == 83) {
+            barI.down();
+            console.log(barI.toString());
+        }
+    });
     
-    if (ev.keyCode == 38) {
-        barD.up();
-        console.log(barD.toString());
-    }else if (ev.keyCode == 40) {
-        barD.down();
-        console.log(barD.toString());
-    }else if (ev.keyCode == 87) {
-        console.log(ev.keyCode);
-        barI.up();
-        console.log(barI.toString());
-    }else if (ev.keyCode == 83) {
-        console.log(ev.keyCode);
-        barI.down();
-        console.log(barI.toString());
+    // window.addEventListener("load",controller);
+    window.requestAnimationFrame(controller);
+    
+    
+    function controller(){
+        board_view.play();
+        window.requestAnimationFrame(controller);
     }
-});
-
-window.addEventListener("load",main);
-
-function main(){
-    var canvas = document.getElementById('canva');
-    console.log(board);
-     board_view.draw();
-}
