@@ -12,15 +12,27 @@
     self.Board.prototype = {
         //mi get para obtener mis elementos 
         get elements(){
-            var elements = this.bars;
-            // elements.push(this.ball);
+            var elements = this.bars.map(function(bar){ return bar;});
+            elements.push(this.ball);
             //nos devuelte las barras y el tablero
             return elements;
         }
     }
 })();
 
-//Funcion de la pelota
+// Funcion de la pelota
+(function(){
+    self.Ball = function(x,y,radio,board){
+        this.x = x;
+        this.y = y;
+        this.radio = radio;
+        this.speed_y = 0;
+        this.speed_x = 3;
+        this.board = board;
+        board.ball = this;
+        this.kind = "circle";
+    }
+})();
 
 //Nos permitira dibujar las barras
 (function(){
@@ -42,7 +54,6 @@
         },
         up:function(){
             //funcion para subir la barra
-            // this.y = this.y - this.speed;
             this.y -= this.speed;
         },
 
@@ -64,16 +75,15 @@
     }
 
         self.BoardView.prototype = {
-            clean: function(){
-                console.log(":3");
-                this.ctx.clearRect(0,0,this.board.width,this.board.height);
-            },
              draw: function(){
-            // console.log(this.board);
+            console.log(this.board);
             for (var i = this.board.elements.length-1; i >= 0 ; i--) {
                 var el = this.board.elements[i];
                 draw(this.ctx,el);                
             };
+        },
+        clean: function(){
+            this.ctx.clearRect(0,0,this.board.width,this.board.height);
         },
         play: function (){
             this.clean();
@@ -83,17 +93,18 @@
 
     //Dibujara los 
     function draw(ctx,element){
-        // if (element !== null && element.hasOwnProperty("kind")) {
-        // if (element !== null ) {
             switch (element.kind) {
                 case "rectangle":
                     ctx.fillRect(element.x,element.y,element.width,element.height);
                     break;
+                case "circle":
+                    ctx.beginPath();
+                    ctx.arc(element.x,element.y,element.radio,0,7);
+                    ctx.fill();
+                    ctx.closePath();
+                    break;
             
-                // default:
-                //     break;
             }
-        // }
 
     }
 
@@ -102,29 +113,25 @@
 
 var canvas = document.getElementById('canvas');
 var board = new Board(800,400);
+var barI = new Bar(20,100,40,100,board);
+var barD = new Bar(737,100,40,100,board);
 var board_view = new BoardView(canvas,board);
- var barI = new Bar(20,100,40,100,board);
- var barD = new Bar(737,100,40,100,board);
+var ball = new Ball(350,100,10,board);
 
  
  document.addEventListener("keydown",function(ev){
      ev.preventDefault();
      if (ev.keyCode == 38) {
          barD.up();
-         console.log(barD.toString());
         }else if (ev.keyCode == 40) {
             barD.down();
-            console.log(barD.toString());
         }else if (ev.keyCode == 87) {
             barI.up();
-            console.log(barI.toString());
         }else if (ev.keyCode == 83) {
             barI.down();
-            console.log(barI.toString());
         }
     });
     
-    // window.addEventListener("load",controller);
     window.requestAnimationFrame(controller);
     
     
