@@ -143,6 +143,7 @@
                     this.board.playing = false;
                     mensajeAGamer(bar);
                     setTimeout(()=> {
+                        //reinicio la partida que aun no se gana
                         this.board.ball.restablecer(this.board.ball.direcion,board);
                     },1500);
                 }
@@ -206,6 +207,7 @@
         }else{
             mensaje = "Felicidades jugador "+bar.gamer+ " has ganado esta partida";
             mostrarHTML(mensaje,mostrarEn,modal,1500);
+            //reinicio el juego por completo
             this.board.ball.restablecer(this.board.ball.direcion,board);
             barI.juegoNuevo();
             barD.juegoNuevo();
