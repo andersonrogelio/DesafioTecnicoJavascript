@@ -48,8 +48,13 @@
         get height(){
             return this.radio * 2;
         },
+        restablecer: function(direcion,board){
+            this.direcion = direcion;
+            this.x = 350;
+            this.y = 100;
+            board.playing = true;
+        },
         collision: function(bar){
-        console.log(":D");
             
 
             //Reacciona a la colicion con una barra que recibe como parametro
@@ -72,7 +77,10 @@
 
 //Nos permitira dibujar las barras
 (function(){
-    self.Bar = function(x,y,width,height,board){
+    self.Bar = function(x,y,width,height,board,gamer){
+        //las dos primera declaraciones serviran para saber el nombre y los puntos del jugador
+        this.gamer = gamer;
+        this.puntos = 0;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -123,9 +131,12 @@
         check_collisions: function(){
             for (let i = this.board.bars.length - 1; i >= 0; i--) {
                 var bar = this.board.bars[i];
-                // console.log(hit(bar, this.board.ball));
                 if (hit(bar, this.board.ball)) {
                     this.board.ball.collision(bar);
+                }else if (hit(bar, this.board.ball) == false ) {
+                    this.board.playing = false;
+                    mensajeAGamer(bar);
+                    this.board.ball.restablecer(this.board.ball.direcion,board);
                 }
             };
         },
@@ -165,6 +176,15 @@
                 }
     }
 
+    function mensajeAGamer(bar){
+        bar.puntos += 1 ;
+        if (bar.puntos < 5) {
+            window.alert("Felicidades jugador "+bar.gamer+ " has hecho un punto, total de puntos: "+ bar.puntos);
+        }else{
+            window.alert("Felicidades jugador "+bar.gamer+ " has ganado esta partida");
+        }
+    }
+
     
     //Dibujara los 
     function draw(ctx,element){
@@ -188,8 +208,8 @@
 
 var canvas = document.getElementById('canvas');
 var board = new Board(800,400);
-var barI = new Bar(20,100,40,100,board);
-var barD = new Bar(737,100,40,100,board);
+var barI = new Bar(20,100,40,100,board,"A");
+var barD = new Bar(737,100,40,100,board,"B");
 var board_view = new BoardView(canvas,board);
 var ball = new Ball(350,100,10,board);
 
