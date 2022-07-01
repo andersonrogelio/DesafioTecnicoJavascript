@@ -1,4 +1,7 @@
 body{
+    /* background-color: #797596;
+    background-color: #A1869E; */
+    background-color: #F4B942;
     height: 680px;
     display: flex;
     flex-direction: row;
@@ -11,6 +14,7 @@ body{
     height: 490px;
 }
 canvas{
+    background-image: url(img/descarga\ 400px.jpg);
     border: solid;
     border-width: 5px;
     display: block;
