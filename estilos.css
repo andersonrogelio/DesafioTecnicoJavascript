@@ -1,3 +1,52 @@
+body{
+    height: 680px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+
+}
+.contendor{
+    height: 490px;
+}
 canvas{
     border: solid;
+    border-width: 5px;
+    display: block;
+    width: 800px;
+    height: 400px;
+    margin: auto;
+
+}
+h1{
+    text-align: center;
+    font-family: 'Rubik Moonrocks', cursive;
+}
+.modal_contenedor{
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.3);
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    opacity: 0;
+}
+
+.show{
+    pointer-events: auto;
+    opacity: 1;
+}
+.modal{
+    background-color: white;
+    width: 600px;
+    max-width: 100%;
+    padding: 30px 50px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-align: center;
 }

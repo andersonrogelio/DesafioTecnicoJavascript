@@ -94,11 +94,15 @@
     self.Bar.prototype = {
         down:function(){
             //funcion para bajar la barra
-            this.y += this.speed;
+            if (this.y < 300) {
+                this.y += this.speed;
+            }
         },
         up:function(){
             //funcion para subir la barra
-            this.y -= this.speed;
+            if (this.y > 0) {
+                this.y -= this.speed;
+            }
         },
         juegoNuevo: function (){
             this.puntos = 0;
@@ -138,7 +142,9 @@
                 }else if (hit(bar, this.board.ball) == false ) {
                     this.board.playing = false;
                     mensajeAGamer(bar);
-                    this.board.ball.restablecer(this.board.ball.direcion,board);
+                    setTimeout(()=> {
+                        this.board.ball.restablecer(this.board.ball.direcion,board);
+                    },1500);
                 }
             };
         },
@@ -177,13 +183,29 @@
                     return hit;
                 }
     }
+//funcion que muestra y luego de un tiempo oculta el modal de mensajes
+    function mostrarHTML(mensaje,donde,modal,tiempo){
+        donde.innerHTML = mensaje;
+        modal.classList.add('show');
+        setTimeout(()=> {
+            modal.classList.remove('show');
+        },tiempo);
 
+    }
+//funcion que me servira para mostrar los mensajes además de contar puntos 
     function mensajeAGamer(bar){
         bar.puntos += 1 ;
+        let mensaje;
+        //capturo objetos del html para poder mostrar mi mensaje con un PopUp
+        let modal = document.getElementById("modal_contenedor");
+        let mostrarEn = document.getElementById("mensajes");
+        //condicional que cambia el mensaje en función de si ya se gano el juego
         if (bar.puntos < 5) {
-            window.alert("Felicidades jugador "+bar.gamer+ " has hecho un punto, total de puntos: "+ bar.puntos);
+            mensaje = "Felicidades jugador "+bar.gamer+ " has hecho un punto, total de puntos: "+ bar.puntos;
+            mostrarHTML(mensaje,mostrarEn,modal,1500);
         }else{
-            window.alert("Felicidades jugador "+bar.gamer+ " has ganado esta partida");
+            mensaje = "Felicidades jugador "+bar.gamer+ " has ganado esta partida";
+            mostrarHTML(mensaje,mostrarEn,modal,1500);
             this.board.ball.restablecer(this.board.ball.direcion,board);
             barI.juegoNuevo();
             barD.juegoNuevo();
@@ -213,8 +235,8 @@
 
 var canvas = document.getElementById('canvas');
 var board = new Board(800,400);
-var barI = new Bar(20,100,40,100,board,"A");
-var barD = new Bar(737,100,40,100,board,"B");
+var barI = new Bar(20,100,20,100,board,"A");
+var barD = new Bar(737,100,20,100,board,"B");
 var board_view = new BoardView(canvas,board);
 var ball = new Ball(350,100,10,board);
 
@@ -237,9 +259,6 @@ var ball = new Ball(350,100,10,board);
     
     board_view.draw();
     window.requestAnimationFrame(controller);
-    // setTimeout(function(){
-    //     ball.direction = -1;
-    // },400);
     
     
     function controller(){
