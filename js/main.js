@@ -29,9 +29,45 @@
         this.speed_y = 0;
         this.speed_x = 3;
         this.board = board;
+        this.direction = 1;
+        this.brounce_angle = 0;
+        this.max_brounce_angle = Math.PI / 12;
+        this.speed = 3;
         board.ball = this;
         this.kind = "circle";
     }
+
+    self.Ball.prototype = {
+        move: function(){
+            this.x += (this.speed_x * this.direction);
+            this.y += (this.speed_y * this.direction);
+        },
+        get width(){
+            return this.radio * 2;
+        },
+        get height(){
+            return this.radio * 2;
+        },
+        collision: function(bar){
+        console.log(":D");
+            
+
+            //Reacciona a la colicion con una barra que recibe como parametro
+            var relative_intersect_y = (bar.y + (bar.height / 2) ) - this.y;
+
+            var normalized_intersect_y = relative_intersect_y / (bar.height / 2);
+            this.bounce_angle = normalized_intersect_y * this.max_brounce_angle;
+
+            this.speed_y = this.speed * -Math.sin(this.brounce_angle);
+            this.speed_x = this.speed * Math.cos(this.brounce_angle);
+
+            if (this.x > (this.board.width / 2)) this.direction = -1; 
+            else this.direction = 1;
+                
+            
+        }
+    }
+
 })();
 
 //Nos permitira dibujar las barras
@@ -76,7 +112,6 @@
 
         self.BoardView.prototype = {
              draw: function(){
-            console.log(this.board);
             for (var i = this.board.elements.length-1; i >= 0 ; i--) {
                 var el = this.board.elements[i];
                 draw(this.ctx,el);                
@@ -85,12 +120,52 @@
         clean: function(){
             this.ctx.clearRect(0,0,this.board.width,this.board.height);
         },
+        check_collisions: function(){
+            for (let i = this.board.bars.length - 1; i >= 0; i--) {
+                var bar = this.board.bars[i];
+                // console.log(hit(bar, this.board.ball));
+                if (hit(bar, this.board.ball)) {
+                    this.board.ball.collision(bar);
+                }
+            };
+        },
         play: function (){
-            this.clean();
-            this.draw();
+            if (this.board.playing) {
+                this.clean();
+                this.draw();
+                this.check_collisions();
+                this.board.ball.move();
+            }
         }
     }
 
+    function hit(a,b) {
+
+        //revisa si el elemento a coliciona con b
+        var hit = false;
+        //colisiones horizontales
+        if (b.x + b.width >= a.x && b.x < a.x + a.width) {
+            //Colisiones verticales
+            if (b.y + b.height >= a.y && b.y < a.y + a.height) {
+                hit = true;
+            }
+        }
+            //Colision de b con a
+            if (b.x <= a.x && b.x + b.width >= a.x + a.width) {
+                if (b.y <= a.y && b.y + b.height >= a.y + a.height) {
+                    hit = true;
+                }
+            }
+                //Colision de b con a
+                if (a.x <= b.x && a.x + a.width >= b.x + b.width) {
+                    if (a.y <= b.y && a.y + a.height >= b.y + b.height) {
+                        hit = true;
+                    }              
+                    return hit;
+                }
+    }
+
+    
     //Dibujara los 
     function draw(ctx,element){
             switch (element.kind) {
@@ -120,8 +195,8 @@ var ball = new Ball(350,100,10,board);
 
  
  document.addEventListener("keydown",function(ev){
-     ev.preventDefault();
      if (ev.keyCode == 38) {
+         ev.preventDefault();
          barD.up();
         }else if (ev.keyCode == 40) {
             barD.down();
@@ -129,10 +204,17 @@ var ball = new Ball(350,100,10,board);
             barI.up();
         }else if (ev.keyCode == 83) {
             barI.down();
+        }else if (ev.keyCode === 32) {
+            ev.preventDefault();
+            board.playing = !board.playing;
         }
     });
     
+    board_view.draw();
     window.requestAnimationFrame(controller);
+    // setTimeout(function(){
+    //     ball.direction = -1;
+    // },400);
     
     
     function controller(){
