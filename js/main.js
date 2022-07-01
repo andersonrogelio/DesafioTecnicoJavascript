@@ -100,7 +100,9 @@
             //funcion para subir la barra
             this.y -= this.speed;
         },
-
+        juegoNuevo: function (){
+            this.puntos = 0;
+        },
         toString: function(){
             return "x: "+this.x +" y: "+ this.y;
         }
@@ -182,6 +184,9 @@
             window.alert("Felicidades jugador "+bar.gamer+ " has hecho un punto, total de puntos: "+ bar.puntos);
         }else{
             window.alert("Felicidades jugador "+bar.gamer+ " has ganado esta partida");
+            this.board.ball.restablecer(this.board.ball.direcion,board);
+            barI.juegoNuevo();
+            barD.juegoNuevo();
         }
     }
 
